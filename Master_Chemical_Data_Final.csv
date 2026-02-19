@@ -1,0 +1,149 @@
+Chemical_Name,MW,LogP,TPSA,Complexity,Label
+Methane,16.04,0.64,0.0,0.0,0
+Ethane,30.07,1.03,0.0,0.0,0
+Propane,44.1,1.42,0.0,0.0,0
+Butane,58.12,1.81,0.0,2.0,2
+Pentane,72.15,2.2,0.0,7.5,2
+Hexane,86.18,2.59,0.0,12.0,2
+Heptane,100.2,2.98,0.0,19.2,2
+Octane,114.23,3.37,0.0,25.0,2
+Methanol,32.04,-0.39,20.23,2.0,0
+Ethanol,46.07,-0.0,20.23,2.8,0
+Propanol,60.1,0.39,20.23,7.2,0
+Butanol,74.12,0.78,20.23,13.1,0
+Pentanol,88.15,1.17,20.23,19.9,0
+Hexanol,102.18,1.56,20.23,27.4,2
+Isopropanol,60.1,0.39,20.23,10.8,0
+Benzene,78.11,1.69,0.0,15.5,2
+Toluene,92.14,2.0,0.0,42.0,2
+Ethylbenzene,106.17,2.25,0.0,51.1,2
+Naphthalene,128.17,2.84,0.0,80.6,2
+Anthracene,178.23,3.99,0.0,154.0,2
+Formic acid,46.03,-0.3,37.3,10.3,0
+Acetic acid,60.05,0.09,37.3,31.0,0
+Propionic acid,74.08,0.48,37.3,40.2,0
+Butyric acid,88.11,0.87,37.3,49.5,0
+Citric acid,192.12,-1.25,132.13,227.0,1
+Acetone,58.08,0.6,17.07,26.3,0
+Methylethylketone,72.11,0.99,17.07,38.9,0
+Diethylketone,86.13,1.38,17.07,41.9,0
+Cyclohexanone,98.14,1.52,17.07,68.2,2
+Chloroform,119.38,1.99,0.0,8.0,2
+Dichloromethane,84.93,1.42,0.0,2.8,0
+Carbon tetrachloride,153.82,2.55,0.0,19.1,2
+Ethyl chloride,64.52,1.25,0.0,2.8,0
+Ammonia,17.03,0.16,35.0,0.0,0
+Hydrazine,32.05,-1.18,52.04,0.0,1
+Aniline,93.13,1.27,26.02,46.1,0
+Pyridine,79.1,1.08,12.89,30.9,0
+Phenol,94.11,1.39,20.23,46.1,0
+Nitrobenzene,123.11,1.59,43.14,102.0,2
+Sulfuric acid,98.08,-0.65,74.6,81.3,1
+Nitric acid,63.01,-0.35,63.37,24.8,1
+Phosphoric acid,97.99,-0.93,77.76,49.8,1
+Hydrochloric acid,36.46,0.42,0.0,0.0,0
+Sodium hydroxide,40.0,-3.17,30.0,2.0,0
+Potassium hydroxide,56.11,-3.17,30.0,2.0,0
+Sodium cyanide,49.01,-2.9,23.79,12.8,0
+Sodium chloride,58.44,-5.99,0.0,2.0,0
+Urea,60.06,-0.98,69.11,29.0,1
+Glucose,180.16,-3.22,110.38,151.0,1
+Fructose,180.16,-3.22,110.38,162.0,1
+Sucrose,342.3,-5.4,189.53,395.0,1
+Glycerol,92.09,-1.67,60.69,25.2,1
+Ethylene glycol,62.07,-1.03,40.46,6.0,1
+Ethyl acetate,88.11,0.57,26.3,49.5,0
+Butyl acetate,116.16,1.35,26.3,68.9,0
+Diethyl ether,74.12,1.04,9.23,11.1,0
+Tetrahydrofuran,72.11,0.8,9.23,22.8,0
+Acetonitrile,41.05,0.53,23.79,29.3,0
+Dimethylsulfoxide,78.14,-0.01,17.07,29.0,0
+Quinoline,129.16,2.23,12.89,111.0,2
+Isooctane,114.23,3.08,0.0,54.9,2
+Magnesium chloride,95.21,-6.37,0.0,0.0,0
+Calcium chloride,110.98,-6.37,0.0,0.0,0
+Barium sulfate,233.39,-1.72,80.26,62.2,1
+Aluminium sulfate,342.15,-4.78,240.78,62.2,1
+Isopentane,72.15,2.05,0.0,14.0,2
+Neopentane,72.15,2.05,0.0,15.5,2
+Hexene,84.16,2.36,0.0,35.3,2
+Heptene,98.19,2.75,0.0,37.3,2
+Propionic anhydride,130.14,0.88,43.37,103.0,1
+Succinic acid,118.09,-0.06,74.6,92.6,1
+Maleic acid,116.07,-0.29,74.6,119.0,1
+Fumaric acid,116.07,-0.29,74.6,119.0,1
+Benzyl alcohol,108.14,1.18,20.23,55.4,0
+Benzaldehyde,106.12,1.5,17.07,72.5,0
+Acetophenone,120.15,1.89,17.07,101.0,2
+Sodium nitrate,84.99,-3.24,66.2,18.8,1
+Potassium nitrate,101.1,-3.24,66.2,18.8,1
+Silver nitrate,169.87,-0.24,66.2,18.8,1
+Copper sulfate,159.61,-1.34,80.26,62.2,1
+Zinc oxide,81.39,-0.12,28.5,0.0,0
+Titanium dioxide,79.86,-0.24,34.14,18.3,0
+Silicon dioxide,60.08,-0.62,34.14,18.3,0
+Calcium oxide,56.08,-0.5,17.07,2.0,0
+Bromobenzene,157.01,2.45,0.0,46.1,2
+Iodomethane,141.94,1.05,0.0,2.0,0
+Benzyl chloride,126.59,2.43,0.0,55.4,2
+Trichloroethylene,131.39,2.5,0.0,42.9,2
+Perchloroethylene,165.83,3.07,0.0,55.6,2
+Methyl acetate,74.08,0.18,26.3,40.2,0
+Propyl acetate,102.13,0.96,26.3,59.1,0
+Isopropyl acetate,102.13,0.96,26.3,66.5,0
+Methyl formate,60.05,-0.21,26.3,18.0,0
+Ethyl formate,74.08,0.18,26.3,26.1,0
+Dibutyl ether,130.23,2.6,9.23,37.8,2
+Anisole,108.14,1.7,9.23,55.4,2
+Phenetole,122.17,2.09,9.23,65.0,2
+Dimethoxyethane,90.12,0.28,18.46,17.5,0
+Dimethylformamide,73.09,-0.3,20.31,33.9,0
+Dimethylacetamide,87.12,0.09,20.31,58.6,0
+Acrylonitrile,53.06,0.7,23.79,54.9,0
+Propionitrile,55.08,0.92,23.79,38.5,0
+Butyronitrile,69.11,1.31,23.79,47.9,0
+Catechol,110.11,1.1,40.46,62.9,0
+Resorcinol,110.11,1.1,40.46,64.9,0
+Hydroquinone,110.11,1.1,40.46,54.9,0
+Cyclohexanol,100.16,1.31,20.23,46.1,0
+Menthol,156.27,2.44,20.23,120.0,2
+Ethylene glycol monomethyl ether,76.09,-0.37,29.46,14.4,0
+Styrene,104.15,2.33,0.0,68.1,2
+Cumene,120.19,2.81,0.0,68.1,2
+Mesitylene,120.19,2.61,0.0,55.0,2
+Biphenyl,154.21,3.35,0.0,100.0,2
+Indene,116.16,2.26,0.0,124.0,2
+Tetralin,132.21,2.57,0.0,92.6,2
+Ammonium sulfate,132.14,-0.59,153.26,62.2,1
+Potassium permanganate,158.03,-4.54,74.27,118.0,1
+Sodium thiosulfate,158.11,-7.0,63.19,82.6,1
+Barium chloride,208.23,-6.37,0.0,2.8,1
+Ferrous sulfate,151.91,-1.34,80.26,62.2,1
+Zinc sulfate,161.45,-1.34,80.26,62.2,1
+Nickel sulfate,154.76,-1.34,80.26,62.2,1
+Sodium sulfite,126.04,-7.0,63.19,18.8,1
+Potassium chlorate,122.55,-6.56,69.18,49.8,1
+Lactose,342.3,-5.4,189.53,382.0,1
+Maltose,342.3,-5.4,189.53,382.0,1
+Glycine,75.07,-0.97,63.32,42.9,1
+Alanine,89.09,-0.58,63.32,61.8,1
+Valine,117.15,0.05,63.32,90.4,1
+Leucine,131.17,0.44,63.32,101.0,1
+Tartaric acid,150.09,-2.12,115.06,134.0,1
+Malic acid,134.09,-1.09,94.83,129.0,1
+Aspartic acid,133.1,-1.13,100.62,133.0,1
+Glutamic acid,147.13,-0.74,100.62,145.0,1
+Calcium sulfate,136.14,-1.72,80.26,62.2,1
+Magnesium carbonate,84.31,-2.83,63.19,18.8,1
+Potassium sulfate,174.26,-7.33,80.26,62.2,1
+Sodium phosphate,117.96,-5.82,86.25,36.8,1
+Ammonium chloride,53.49,-2.62,36.5,0.0,0
+Zinc carbonate,125.4,-2.45,63.19,18.8,1
+Barium carbonate,197.34,-2.83,63.19,18.8,1
+Propyl gallate,212.2,1.37,86.99,206.0,1
+Ascorbyl palmitate,414.54,4.62,113.29,515.0,1
+Sorbic acid,112.13,1.2,37.3,122.0,0
+Sodium benzoate,144.1,-2.95,40.13,108.0,0
+Potassium sorbate,150.22,-3.13,40.13,127.0,0
+Ethyl paraben,166.18,1.57,46.53,148.0,2
+Methyl paraben,152.15,1.18,46.53,136.0,1
