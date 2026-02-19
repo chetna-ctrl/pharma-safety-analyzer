@@ -2,7 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from rdkit import Chem
-from rdkit.Chem import Descriptors, AllChem, Lipinski, Draw
+from rdkit.Chem import Descriptors, AllChem, Lipinski
+try:
+    from rdkit.Chem import Draw
+    DRAW_AVAILABLE = True
+except ImportError:
+    DRAW_AVAILABLE = False
 import plotly.graph_objects as go
 import pickle
 import os
@@ -171,6 +176,8 @@ def get_smiles_from_name(name):
         return None
 
 def render_molecule(smiles):
+    if not DRAW_AVAILABLE:
+        return None
     mol = Chem.MolFromSmiles(smiles)
     if mol:
         img = Draw.MolToImage(mol, size=(300, 300))
