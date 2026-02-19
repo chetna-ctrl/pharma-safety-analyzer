@@ -168,17 +168,42 @@ model, scaler = load_assets()
 # --- Helper Functions ---
 
 def get_smiles_from_name(name):
-    if not name or len(name) < 2:
+    if not name:
         return None
+    name = name.strip().capitalize()
+
+    # 1. Local Expert Dictionary (Instant & Offline)
+    local_dict = {
+        "Aspirin":      "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "Caffeine":     "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+        "Paracetamol":  "CC(=O)NC1=CC=C(O)C=C1",
+        "Ibuprofen":    "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+        "Glucose":      "C(C1C(C(C(C(O1)O)O)O)O)O",
+        "Benzene":      "c1ccccc1",
+        "Nicotine":     "CN1CCCC1C2=CN=CC=C2",
+        "Tnt":          "CC1=C(C=C(C=C1[N+](=O)[O-])[N+](=O)[O-])[N+](=O)[O-]",
+        "Methanol":     "CO",
+        "Ethanol":      "CCO",
+        "Acetone":      "CC(C)=O",
+        "Morphine":     "CN1CCC23C=CC(O)C2OC4=C(O)C=CC1=C34",
+        "Penicillin":   "CC1(C)SC2C(NC1=O)C(=O)N2CC(=O)O",
+        "Dopamine":     "NCCC1=CC(O)=C(O)C=C1",
+        "Cholesterol":  "CC(C)CCCC(C)C1CCC2C1CCC3=CC(=O)CCC23C",
+    }
+
+    if name in local_dict:
+        return local_dict[name]
+
+    # 2. PubChem Fallback
     try:
         url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{name}/property/IsomericSMILES/JSON"
         headers = {'User-Agent': 'Mozilla/5.0 (academic research)'}
         response = requests.get(url, headers=headers, timeout=8)
         if response.status_code == 200:
             return response.json()['PropertyTable']['Properties'][0]['IsomericSMILES']
-        return None
     except:
-        return None
+        pass
+    return None
 
 def render_molecule(mol):
     if not DRAW_AVAILABLE or mol is None:
