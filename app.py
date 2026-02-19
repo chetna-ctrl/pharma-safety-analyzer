@@ -168,10 +168,16 @@ model, scaler = load_assets()
 # --- Utility Functions ---
 
 def get_smiles_from_name(name):
+    if not name:
+        return None
     try:
         url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{name}/property/IsomericSMILES/JSON"
-        res = requests.get(url, timeout=5).json()
-        return res['PropertyTable']['Properties'][0]['IsomericSMILES']
+        headers = {'User-Agent': 'Mozilla/5.0 (academic research)'}
+        response = requests.get(url, headers=headers, timeout=8)
+        if response.status_code == 200:
+            data = response.json()
+            return data['PropertyTable']['Properties'][0]['IsomericSMILES']
+        return None
     except:
         return None
 
@@ -186,7 +192,14 @@ def render_molecule(smiles):
 
 def plot_radar(mw, logp, tpsa, hbd, hba):
     categories = ['MolWt (500)', 'LogP (5)', 'TPSA (140)', 'H-Bond Donor (5)', 'H-Bond Acceptor (10)']
-    values = [mw/500, logp/5, tpsa/140, hbd/5, hba/10]
+    # Cap at 1.2 so outliers don't explode the chart
+    values = [
+        min(mw/500, 1.2),
+        min(logp/5, 1.2),
+        min(tpsa/140, 1.2),
+        min(hbd/5, 1.2),
+        min(hba/10, 1.2)
+    ]
     
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(
@@ -200,7 +213,7 @@ def plot_radar(mw, logp, tpsa, hbd, hba):
     fig.update_layout(
         polar=dict(
             bgcolor='#F8FAFC',
-            radialaxis=dict(visible=True, range=[0, 1.5], color='#374151', gridcolor='#E5E7EB'),
+            radialaxis=dict(visible=True, range=[0, 1.2], color='#374151', gridcolor='#E5E7EB'),
             angularaxis=dict(color='#1E3A8A')
         ),
         paper_bgcolor='rgba(0,0,0,0)',
@@ -258,10 +271,14 @@ with st.sidebar:
     search_type = st.radio("Search By:", ["Common Name", "SMILES String"])
     
     if search_type == "Common Name":
-        name_input = st.text_input("Enter Chemical Name:", "Aspirin")
-        final_smiles = get_smiles_from_name(name_input)
-        if name_input and not final_smiles:
-            st.error("Compound not found in PubChem. Try SMILES instead.")
+        name_input = st.text_input("Enter Chemical Name (e.g. Caffeine, Aspirin):", "Aspirin")
+        if name_input:
+            with st.spinner(f"Searching PubChem for '{name_input}'..."):
+                final_smiles = get_smiles_from_name(name_input)
+            if not final_smiles:
+                st.error("Not found in PubChem. Please switch to SMILES input.")
+        else:
+            final_smiles = None
     else:
         final_smiles = st.text_input("Enter SMILES:", "CC(=O)OC1=CC=CC=C1C(=O)O")
 
