@@ -2,23 +2,31 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from rdkit import Chem
-from rdkit.Chem import Descriptors, AllChem, Lipinski
+from rdkit.Chem import Descriptors, AllChem, Lipinski, Draw
+import plotly.graph_objects as go
 import pickle
 import os
+import requests
+from PIL import Image
+import io
 
 # --- Page Config ---
 st.set_page_config(
-    page_title="Chemistry-Pharma Risk Analyzer",
-    page_icon="🧪",
+    page_title="Antigravity Pharma-Safety AI",
+    page_icon="🔬",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS for Premium Look ---
+# --- Custom CSS (Fixed Color Crash & Premium Look) ---
 st.markdown("""
     <style>
-    .main {
+    .stApp {
         background-color: #f8f9fa;
+    }
+    h1, h2, h3 {
+        color: #1e3a8a !important;
+        font-family: 'Inter', sans-serif;
     }
     .stMetric {
         background-color: white;
@@ -29,12 +37,12 @@ st.markdown("""
     .stAlert {
         border-radius: 10px;
     }
-    h1 {
-        color: #1e3a8a;
-        font-family: 'Inter', sans-serif;
-    }
-    h2, h3 {
-        color: #1e40af;
+    .report-text {
+        color: #1f2937;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
     }
     .stButton>button {
         background-color: #2563eb;
@@ -60,20 +68,60 @@ def load_assets():
     if not os.path.exists(model_path) or not os.path.exists(scaler_path):
         return None, None
     
-    with open(model_path, 'rb') as f:
-        model = pickle.load(f)
-    with open(scaler_path, 'rb') as f:
-        scaler = pickle.load(f)
-    return model, scaler
+    try:
+        with open(model_path, 'rb') as f:
+            model = pickle.load(f)
+        with open(scaler_path, 'rb') as f:
+            scaler = pickle.load(f)
+        return model, scaler
+    except:
+        return None, None
 
 model, scaler = load_assets()
 
-# --- Prediction Pipeline ---
+# --- Utility Functions ---
+
+def get_smiles_from_name(name):
+    try:
+        url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{name}/property/IsomericSMILES/JSON"
+        res = requests.get(url, timeout=5).json()
+        return res['PropertyTable']['Properties'][0]['IsomericSMILES']
+    except:
+        return None
+
+def render_molecule(smiles):
+    mol = Chem.MolFromSmiles(smiles)
+    if mol:
+        # Drawing with RDKit
+        img = Draw.MolToImage(mol, size=(300, 300))
+        return img
+    return None
+
+def plot_radar(mw, logp, tpsa, hbd, hba):
+    # Normalizing values for a 0-1 scale to fit radar (Rule of 5 thresholds)
+    categories = ['MolWt (500)', 'LogP (5)', 'TPSA (140)', 'H-Bond Donor (5)', 'H-Bond Acceptor (10)']
+    values = [mw/500, logp/5, tpsa/140, hbd/5, hba/10]
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(
+        r=values,
+        theta=categories,
+        fill='toself',
+        name='Molecule Profile',
+        line_color='#1e40af'
+    ))
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 1.5])),
+        showlegend=False,
+        height=350,
+        margin=dict(l=40, r=40, t=20, b=20)
+    )
+    return fig
+
 def get_features(smiles):
     mol = Chem.MolFromSmiles(smiles)
     if not mol: return None
     
-    # 1. 6 Basic Descriptors (Must match training order)
     mw = Descriptors.MolWt(mol)
     logp = Descriptors.MolLogP(mol)
     tpsa = Descriptors.TPSA(mol)
@@ -81,10 +129,7 @@ def get_features(smiles):
     hbd = Lipinski.NumHDonors(mol)
     hba = Lipinski.NumHAcceptors(mol)
     
-    # 2. Morgan Fingerprints (1024-bit)
     fp = np.array(AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits=1024))
-    
-    # 3. Combine
     descriptors = [mw, logp, tpsa, complexity, hbd, hba]
     features = np.hstack([descriptors, fp])
     return features
@@ -110,15 +155,22 @@ def get_structural_alerts(smiles):
     return found
 
 # --- UI Layout ---
-st.title("🧪 Chemistry-Pharma Risk Analysis Dashboard")
-st.markdown("Enter a chemical SMILES string to get a detailed safety and toxicity report.")
+st.title("🔬 Antigravity Pharma-Safety Dashboard")
+st.markdown("Automated Toxicity Screening & Chemical Property Analysis")
 
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/e/e1/GHS_pictogram_skull_and_crossbones.svg", width=100) # Placeholder for logo
-    st.header("Chemical Input")
-    smiles_input = st.text_input("SMILES String:", "CN1C=NC2=C1C(=O)N(C(=O)N2C)C")
-    analyze_btn = st.button("Analyze Compound")
+    st.image("https://upload.wikimedia.org/wikipedia/commons/e/e1/GHS_pictogram_skull_and_crossbones.svg", width=80)
+    st.header("🔍 Search Compound")
+    search_type = st.radio("Search By:", ["Common Name", "SMILES String"])
     
+    if search_type == "Common Name":
+        name_input = st.text_input("Enter Chemical Name:", "Aspirin")
+        final_smiles = get_smiles_from_name(name_input)
+        if name_input and not final_smiles:
+            st.error("Compound not found in PubChem. Please try SMILES.")
+    else:
+        final_smiles = st.text_input("Enter SMILES:", "CC(=O)OC1=CC=CC=C1C(=O)O")
+
     st.divider()
     st.info("""
     **Legend:**
@@ -127,26 +179,35 @@ with st.sidebar:
     - 🔥 Flammable/Physical Hazard
     """)
 
-if analyze_btn or smiles_input:
-    mol = Chem.MolFromSmiles(smiles_input)
-    
+if final_smiles:
+    mol = Chem.MolFromSmiles(final_smiles)
     if mol is None:
-        st.error("Invalid SMILES String! Please enter a valid chemical representation.")
+        st.error("Invalid SMILES String! Please check the structure.")
     else:
-        # Layout: Prediction & Visualization
-        col1, col2 = st.columns([1, 1], gap="large")
+        # Layout: 3 Columns
+        col1, col2, col3 = st.columns([1, 1.2, 1], gap="medium")
         
+        # --- Column 1: Structure ---
         with col1:
-            st.subheader("📊 Analysis Result")
+            st.subheader("🖼️ Structure")
+            mol_img = render_molecule(final_smiles)
+            if mol_img:
+                st.image(mol_img, use_container_width=True)
+            st.caption("Chemical SMILES:")
+            st.code(final_smiles, language="text")
             
+        # --- Column 2: Safety Analysis ---
+        with col2:
+            st.subheader("📊 Safety Analysis")
+            
+            # 1. Prediction Logic
             if model is None or scaler is None:
-                st.warning("Model or Scaler files not found! Displaying Rule-based fallback only.")
-                # Fallback logic
+                st.warning("Model or Scaler files not found! Rule-based only.")
                 status = "Unknown (Model Missing)"
                 confidence = 0.0
                 pred_idx = -1
             else:
-                features = get_features(smiles_input)
+                features = get_features(final_smiles)
                 scaled_features = scaler.transform([features])
                 probs = model.predict_proba(scaled_features)[0]
                 pred_idx = np.argmax(probs)
@@ -155,76 +216,58 @@ if analyze_btn or smiles_input:
                 res_map = {0: "✅ Safe / Low Risk", 1: "⚠️ Toxic / Health Hazard", 2: "🔥 Flammable / Physical"}
                 status = res_map[pred_idx]
                 
-            # --- Expert Hybrid Overrides ---
-            alerts = get_structural_alerts(smiles_input)
-            
-            # Hybrid Decision Logic
-            if alerts and alerts[0] != "None (Structurally Clean)":
-                # If we have structural alerts, we lean towards Toxic regardless of ML if confidence for Safe isn't 100%
+            # 2. Expert Overrides
+            alerts = get_structural_alerts(final_smiles)
+            if alerts:
                 if "Toxic" not in status:
                     status = f"⚠️ Toxic ({alerts[0]})"
                 confidence = max(confidence, 0.90)
                 
-            # Specific High-Risk Overrides
             nitro_count = len(mol.GetSubstructMatches(Chem.MolFromSmarts("[N+](=O)[O-]")))
             if nitro_count >= 2:
                 status = "⚠️ Toxic (Explosive Risk/High Nitro)"
                 confidence = 0.99
-                st.error("🚨 HIGH EXPLOSIVE RISK DETECTED (Multiple Nitro Groups)")
-            
-            # Display Status
-            st.metric("Safety Status", status)
-            st.write(f"**Confidence Score:** {confidence*100:.2f}%")
+                st.error("🚨 HIGH EXPLOSIVE RISK DETECTED")
+
+            st.metric("Final Verdict", status)
+            st.write(f"**ML Confidence:** {confidence*100:.2f}%")
             st.progress(confidence)
             
+            # 3. Visual Analysis (Radar)
+            mw = Descriptors.MolWt(mol)
+            logp = Descriptors.MolLogP(mol)
+            tpsa = Descriptors.TPSA(mol)
+            hbd = Lipinski.NumHDonors(mol)
+            hba = Lipinski.NumHAcceptors(mol)
+            st.plotly_chart(plot_radar(mw, logp, tpsa, hbd, hba), use_container_width=True)
+
+        # --- Column 3: Key Metrics ---
+        with col3:
+            st.subheader("📜 Key Metrics")
+            st.metric("Molecular Weight", f"{mw:.2f} g/mol")
+            st.metric("LogP (Lipophilicity)", f"{logp:.2f}")
+            st.metric("TPSA", f"{tpsa:.2f} Å²")
+            
+            st.divider()
+            st.subheader("💡 Expert Insights")
+            
+            # Drug-likeness logic (Lipinski's Rule of 5)
+            rules = [mw < 500, logp < 5, hbd < 5, hba < 10]
+            score = sum(rules)
+            
+            if score >= 3:
+                st.success("✅ **Rule of Five Compliance:** High drug-likeness.")
+            else:
+                st.warning("⚠️ **Complexity Warning:** Deviates from standard parameters.")
+                
             if alerts:
                 st.subheader("🚩 Structural Alerts")
                 for alert in alerts:
                     st.write(f"- {alert}")
             else:
-                st.success("No major structural alerts found.")
-
-        with col2:
-            st.subheader("🧬 Chemical Properties")
+                st.info("No major structural alerts found.")
             
-            prop_data = {
-                "Property": [
-                    "Molecular Weight", "LogP (Solubility)", "TPSA", 
-                    "Complexity (BertzCT)", "H-Bond Donors", "H-Bond Acceptors",
-                    "Rotatable Bonds"
-                ],
-                "Value": [
-                    f"{Descriptors.MolWt(mol):.2f}", 
-                    f"{Descriptors.MolLogP(mol):.2f}", 
-                    f"{Descriptors.TPSA(mol):.2f}",
-                    f"{Descriptors.BertzCT(mol):.2f}",
-                    Lipinski.NumHDonors(mol),
-                    Lipinski.NumHAcceptors(mol),
-                    Descriptors.NumRotatableBonds(mol)
-                ]
-            }
-            st.table(pd.DataFrame(prop_data))
-            
-            # Show IUPAC Name if possible (via PubChem fallback would be slow, skipping for now)
-            # Maybe show Formula
             st.write(f"**Molecular Formula:** {Descriptors.rdMolDescriptors.CalcMolFormula(mol)}")
 
-        st.divider()
-        st.subheader("💡 Expert Insights")
-        
-        # Drug-likeness logic
-        mw = Descriptors.MolWt(mol)
-        logp = Descriptors.MolLogP(mol)
-        hbd = Lipinski.NumHDonors(mol)
-        hba = Lipinski.NumHAcceptors(mol)
-        
-        rules = [mw < 500, logp < 5, hbd < 5, hba < 10]
-        score = sum(rules)
-        
-        if score >= 3:
-            st.info("ℹ️ **Rule of Five Compliance:** This molecule shows high drug-likeness.")
-        else:
-            st.warning("ℹ️ **Complexity Warning:** This molecule deviates from standard drug-likeness parameters.")
-
 st.markdown("---")
-st.caption("Developed by Antigravity | Chemistry-Pharma Risk Analysis v1.0")
+st.caption("Antigravity AI Lab | M.Tech Research Project | Chemistry-Pharma Risk Analysis v1.2")

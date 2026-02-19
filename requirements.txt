@@ -4,3 +4,6 @@ numpy
 rdkit
 scikit-learn
 xgboost
+plotly
+requests
+Pillow
