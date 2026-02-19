@@ -333,7 +333,13 @@ with tab1:
                 if alerts:
                     st.markdown("**🚩 Structural Alerts:**")
                     for a in alerts:
-                        st.markdown(f"- 🔴 {a}")
+                        st.markdown(
+                            f'<p style="color:#DC2626; background-color:#FEF2F2; '
+                            f'padding:6px 10px; border-radius:6px; '
+                            f'border-left:3px solid #DC2626; font-weight:600; margin:4px 0;">'
+                            f'🔴 {a}</p>',
+                            unsafe_allow_html=True
+                        )
                 else:
                     st.info("✅ No structural alerts found.")
 
