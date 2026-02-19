@@ -18,44 +18,125 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS (Fixed Color Crash & Premium Look) ---
+# --- Custom CSS (Surgical Fix v2 - No Broad Selectors) ---
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    /* APP BACKGROUND */
     .stApp {
-        background-color: #f8f9fa;
+        background-color: #F0F4F8 !important;
+        font-family: 'Inter', sans-serif !important;
     }
-    h1, h2, h3 {
-        color: #1e3a8a !important;
-        font-family: 'Inter', sans-serif;
+
+    /* HEADINGS ONLY */
+    h1 { color: #1E3A8A !important; font-weight: 700 !important; }
+    h2 { color: #1E40AF !important; font-weight: 600 !important; }
+    h3 { color: #1D4ED8 !important; font-weight: 600 !important; }
+
+    /* METRIC CARD — white box, dark readable text */
+    [data-testid="metric-container"] {
+        background-color: #FFFFFF !important;
+        border: 1.5px solid #BFDBFE !important;
+        border-radius: 12px !important;
+        padding: 14px 18px !important;
+        box-shadow: 0 2px 8px rgba(30,58,138,0.09) !important;
     }
-    .stMetric {
-        background-color: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    /* Metric Label (e.g. "Molecular Weight") */
+    [data-testid="stMetricLabel"] > div {
+        color: #374151 !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
     }
-    .stAlert {
-        border-radius: 10px;
+    /* Metric Value (e.g. "180.16 g/mol") */
+    [data-testid="stMetricValue"] > div {
+        color: #0F172A !important;
+        font-size: 1.45rem !important;
+        font-weight: 700 !important;
     }
-    .report-text {
-        color: #1f2937;
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
+
+    /* SIDEBAR — deep blue */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(175deg, #1E3A8A 0%, #1E40AF 100%) !important;
     }
-    .stButton>button {
-        background-color: #2563eb;
-        color: white;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-        transition: all 0.3s;
+    [data-testid="stSidebar"] .stMarkdown p,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] .stRadio p {
+        color: #E0E7FF !important;
     }
-    .stButton>button:hover {
-        background-color: #1d4ed8;
-        transform: translateY(-2px);
+    [data-testid="stSidebar"] input[type="text"] {
+        background-color: #FFFFFF !important;
+        color: #111827 !important;
+        border-radius: 8px !important;
     }
+
+    /* MARKDOWN text in main content */
+    [data-testid="stMarkdownContainer"] p {
+        color: #1F2937 !important;
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+    }
+
+    /* TABLE - styled rows */
+    thead th {
+        background-color: #1E3A8A !important;
+        color: #FFFFFF !important;
+        padding: 10px 14px !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+    }
+    tbody td {
+        background-color: #FFFFFF !important;
+        color: #1F2937 !important;
+        padding: 9px 14px !important;
+        border-bottom: 1px solid #E5E7EB !important;
+        font-size: 0.92rem !important;
+    }
+    tbody tr:nth-child(even) td {
+        background-color: #EFF6FF !important;
+    }
+
+    /* PROGRESS BAR */
+    .stProgress > div > div > div {
+        background: linear-gradient(90deg, #2563EB, #60A5FA) !important;
+        border-radius: 99px !important;
+    }
+    .stProgress > div > div {
+        background-color: #DBEAFE !important;
+        border-radius: 99px !important;
+        height: 10px !important;
+    }
+
+    /* BUTTON */
+    .stButton > button {
+        background-color: #2563EB !important;
+        color: #FFFFFF !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        border: none !important;
+        padding: 0.5rem 1.2rem !important;
+        transition: all 0.2s ease !important;
+    }
+    .stButton > button:hover {
+        background-color: #1D4ED8 !important;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.35) !important;
+    }
+
+    /* CODE BLOCK */
+    .stCode pre, .stCode code {
+        background-color: #1E293B !important;
+        color: #E2E8F0 !important;
+        border-radius: 8px !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* CAPTION */
+    .stCaption p { color: #6B7280 !important; font-size: 0.8rem !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -92,13 +173,11 @@ def get_smiles_from_name(name):
 def render_molecule(smiles):
     mol = Chem.MolFromSmiles(smiles)
     if mol:
-        # Drawing with RDKit
         img = Draw.MolToImage(mol, size=(300, 300))
         return img
     return None
 
 def plot_radar(mw, logp, tpsa, hbd, hba):
-    # Normalizing values for a 0-1 scale to fit radar (Rule of 5 thresholds)
     categories = ['MolWt (500)', 'LogP (5)', 'TPSA (140)', 'H-Bond Donor (5)', 'H-Bond Acceptor (10)']
     values = [mw/500, logp/5, tpsa/140, hbd/5, hba/10]
     
@@ -108,10 +187,18 @@ def plot_radar(mw, logp, tpsa, hbd, hba):
         theta=categories,
         fill='toself',
         name='Molecule Profile',
-        line_color='#1e40af'
+        line_color='#2563EB',
+        fillcolor='rgba(37,99,235,0.15)'
     ))
     fig.update_layout(
-        polar=dict(radialaxis=dict(visible=True, range=[0, 1.5])),
+        polar=dict(
+            bgcolor='#F8FAFC',
+            radialaxis=dict(visible=True, range=[0, 1.5], color='#374151', gridcolor='#E5E7EB'),
+            angularaxis=dict(color='#1E3A8A')
+        ),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#1F2937', family='Inter'),
         showlegend=False,
         height=350,
         margin=dict(l=40, r=40, t=20, b=20)
@@ -167,7 +254,7 @@ with st.sidebar:
         name_input = st.text_input("Enter Chemical Name:", "Aspirin")
         final_smiles = get_smiles_from_name(name_input)
         if name_input and not final_smiles:
-            st.error("Compound not found in PubChem. Please try SMILES.")
+            st.error("Compound not found in PubChem. Try SMILES instead.")
     else:
         final_smiles = st.text_input("Enter SMILES:", "CC(=O)OC1=CC=CC=C1C(=O)O")
 
@@ -184,7 +271,6 @@ if final_smiles:
     if mol is None:
         st.error("Invalid SMILES String! Please check the structure.")
     else:
-        # Layout: 3 Columns
         col1, col2, col3 = st.columns([1, 1.2, 1], gap="medium")
         
         # --- Column 1: Structure ---
@@ -200,23 +286,19 @@ if final_smiles:
         with col2:
             st.subheader("📊 Safety Analysis")
             
-            # 1. Prediction Logic
             if model is None or scaler is None:
-                st.warning("Model or Scaler files not found! Rule-based only.")
+                st.warning("Model or Scaler not found. Rule-based mode only.")
                 status = "Unknown (Model Missing)"
                 confidence = 0.0
-                pred_idx = -1
             else:
                 features = get_features(final_smiles)
                 scaled_features = scaler.transform([features])
                 probs = model.predict_proba(scaled_features)[0]
                 pred_idx = np.argmax(probs)
-                confidence = np.max(probs)
-                
+                confidence = float(np.max(probs))
                 res_map = {0: "✅ Safe / Low Risk", 1: "⚠️ Toxic / Health Hazard", 2: "🔥 Flammable / Physical"}
                 status = res_map[pred_idx]
                 
-            # 2. Expert Overrides
             alerts = get_structural_alerts(final_smiles)
             if alerts:
                 if "Toxic" not in status:
@@ -230,10 +312,9 @@ if final_smiles:
                 st.error("🚨 HIGH EXPLOSIVE RISK DETECTED")
 
             st.metric("Final Verdict", status)
-            st.write(f"**ML Confidence:** {confidence*100:.2f}%")
+            st.markdown(f"**ML Confidence:** `{confidence*100:.2f}%`")
             st.progress(confidence)
             
-            # 3. Visual Analysis (Radar)
             mw = Descriptors.MolWt(mol)
             logp = Descriptors.MolLogP(mol)
             tpsa = Descriptors.TPSA(mol)
@@ -247,27 +328,28 @@ if final_smiles:
             st.metric("Molecular Weight", f"{mw:.2f} g/mol")
             st.metric("LogP (Lipophilicity)", f"{logp:.2f}")
             st.metric("TPSA", f"{tpsa:.2f} Å²")
+            st.metric("H-Bond Donors", str(hbd))
+            st.metric("H-Bond Acceptors", str(hba))
             
             st.divider()
             st.subheader("💡 Expert Insights")
             
-            # Drug-likeness logic (Lipinski's Rule of 5)
             rules = [mw < 500, logp < 5, hbd < 5, hba < 10]
             score = sum(rules)
             
             if score >= 3:
-                st.success("✅ **Rule of Five Compliance:** High drug-likeness.")
+                st.success("✅ **Rule of Five:** High drug-likeness.")
             else:
                 st.warning("⚠️ **Complexity Warning:** Deviates from standard parameters.")
                 
             if alerts:
                 st.subheader("🚩 Structural Alerts")
                 for alert in alerts:
-                    st.write(f"- {alert}")
+                    st.markdown(f"- 🔴 {alert}")
             else:
-                st.info("No major structural alerts found.")
+                st.info("✅ No major structural alerts found.")
             
-            st.write(f"**Molecular Formula:** {Descriptors.rdMolDescriptors.CalcMolFormula(mol)}")
+            st.markdown(f"**Formula:** `{Descriptors.rdMolDescriptors.CalcMolFormula(mol)}`")
 
 st.markdown("---")
-st.caption("Antigravity AI Lab | M.Tech Research Project | Chemistry-Pharma Risk Analysis v1.2")
+st.caption("Antigravity AI Lab | M.Tech Research Project | v1.3 — CSS Fixed")
