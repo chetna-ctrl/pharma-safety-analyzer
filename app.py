@@ -395,11 +395,6 @@ def load_tox21_model():
             return pickle.load(f)
     return None
 
-pharma_model, pharma_scaler = load_pharma_assets()
-tox21_model = load_tox21_model()
-hx_model = load_hx_model()
-pump_model = load_pump_model()
-
 @st.cache_resource
 def load_antigravity_assets():
     m_path = 'antigravity_industrial_model.pkl'
@@ -408,7 +403,22 @@ def load_antigravity_assets():
         return joblib.load(m_path), joblib.load(le_path)
     return None, None
 
-antigravity_model, antigravity_le = load_antigravity_assets()
+@st.cache_data
+def load_training_metadata():
+    try:
+        if os.path.exists('training_metadata.pkl'):
+            with open('training_metadata.pkl', 'rb') as f:
+                return pickle.load(f)
+    except:
+        pass
+    return None
+
+pharma_model, pharma_scaler = load_pharma_assets()
+tox21_model = load_tox21_model()
+hx_model = load_hx_model()
+pump_model = load_pump_model()
+antigravity_model, label_encoder = load_antigravity_assets()
+training_metadata = load_training_metadata()
 
 
 # ─────────────────────────────────────────────
@@ -799,6 +809,7 @@ def get_smiles_from_name(name):
         pass
     return None
 
+@st.cache_data
 def render_molecule(mol):
     if not DRAW_AVAILABLE or mol is None:
         return None
@@ -947,6 +958,7 @@ def get_structural_alerts(smiles):
             found.append(name)
     return found
 
+@st.cache_data
 def get_fingerprint(smiles):
     try:
         mol = Chem.MolFromSmiles(smiles)
@@ -956,8 +968,9 @@ def get_fingerprint(smiles):
         pass
     return None
 
-def predict_pathways(smiles, model):
-    if model is None: return None
+@st.cache_data(_allow_output_mutation=True)
+def predict_pathways(smiles, _model):
+    if _model is None: return None
     fp = get_fingerprint(smiles)
     if fp is None: return None
     pathways = ['NR-AR', 'NR-AR-LBD', 'NR-AhR', 'NR-Aromatase', 'NR-ER', 'NR-ER-LBD', 
@@ -968,7 +981,7 @@ def predict_pathways(smiles, model):
         "PPAR-gamma (Metabolic)", "Antioxidant Response (ARE)", "ATAD5 (DNA Damage)",
         "Heat Shock Response", "Mitochondrial Stress", "p53 (Tumor Suppressor)"
     ]
-    probs = model.predict_proba([fp])
+    probs = _model.predict_proba([fp])
     # probs is a list of arrays for MultiOutputClassifier
     res = {}
     for i, p in enumerate(probs):
@@ -1445,8 +1458,8 @@ This 3-layer approach gives **>95% accuracy** because:
     st.markdown("### 📊 Model Training Insights")
     st.caption("What the AI learned from — transparency into the training data")
     
-    try:
-        meta = pickle.load(open('training_metadata.pkl', 'rb'))
+    if training_metadata:
+        meta = training_metadata
         
         ti1, ti2, ti3, ti4 = st.columns(4)
         ti1.metric("🧪 Total Chemicals Trained", f"{meta.get('total_chemicals', 'N/A'):,}")
@@ -1492,7 +1505,7 @@ This 3-layer approach gives **>95% accuracy** because:
                         yaxis=dict(autorange='reversed')
                     )
                     st.plotly_chart(fig_cm, use_container_width=True)
-    except:
+    else:
         st.info("Training metadata not found. Run `retrain_pharma_model.py` to generate.")
 
 
