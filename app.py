@@ -1292,7 +1292,7 @@ This 3-layer approach gives **>95% accuracy** because:
         items = list(quick_chems.items())
         for idx, (btn_label, chem_name) in enumerate(items):
             col = [qc1, qc2, qc3][idx % 3]
-            if col.button(btn_label, key=f"qc_{idx}", use_column_width=True):
+            if col.button(btn_label, key=f"qc_{idx}", use_container_width=True):
                 st.session_state.quick_pick = chem_name
         
         st.markdown("---")
@@ -1391,7 +1391,7 @@ This 3-layer approach gives **>95% accuracy** because:
                     st.subheader("🖼️ Structure")
                     mol_img = render_molecule(mol)
                     if mol_img:
-                        st.image(mol_img, use_column_width=True)
+                        st.image(mol_img, use_container_width=True)
                     else:
                         st.info("Structure viewer not available on this platform.")
                     st.code(final_smiles, language="text")
@@ -1403,7 +1403,7 @@ This 3-layer approach gives **>95% accuracy** because:
                     tpsa = Descriptors.TPSA(mol)
                     hbd  = Lipinski.NumHDonors(mol)
                     hba  = Lipinski.NumHAcceptors(mol)
-                    st.plotly_chart(plot_radar(mw, logp, tpsa, hbd, hba), use_column_width=True)
+                    st.plotly_chart(plot_radar(mw, logp, tpsa, hbd, hba), use_container_width=True)
 
                 st.markdown("---")
                 m1, m2, m3, m4, m5 = st.columns(5)
@@ -1473,7 +1473,7 @@ This 3-layer approach gives **>95% accuracy** because:
                     height=300, margin=dict(l=10, r=10, t=40, b=10),
                     showlegend=False
                 )
-                st.plotly_chart(fig_pie, use_column_width=True)
+                st.plotly_chart(fig_pie, use_container_width=True)
             
             with cm_col:
                 cm = meta.get('confusion_matrix', [])
@@ -1491,7 +1491,7 @@ This 3-layer approach gives **>95% accuracy** because:
                         height=300, margin=dict(l=10, r=10, t=40, b=10),
                         yaxis=dict(autorange='reversed')
                     )
-                    st.plotly_chart(fig_cm, use_column_width=True)
+                    st.plotly_chart(fig_cm, use_container_width=True)
     except:
         st.info("Training metadata not found. Run `retrain_pharma_model.py` to generate.")
 
@@ -1737,7 +1737,7 @@ Fouling reduces `U`, which reduces heat transfer efficiency.
 
         with col_out:
             st.markdown("#### 📊 Diagnostic Confidence")
-            st.plotly_chart(make_confidence_gauge(conf * 100, "HX Diagnosis Confidence"), use_column_width=True)
+            st.plotly_chart(make_confidence_gauge(conf * 100, "HX Diagnosis Confidence"), use_container_width=True)
 
             st.markdown("#### 🌡️ Temperature Profile")
             fig_temp = go.Figure()
@@ -1757,7 +1757,7 @@ Fouling reduces `U`, which reduces heat transfer efficiency.
                 margin=dict(l=10, r=10, t=20, b=10),
                 font=dict(family='Inter', color='#000000')
             )
-            st.plotly_chart(fig_temp, use_column_width=True)
+            st.plotly_chart(fig_temp, use_container_width=True)
 
             st.markdown("#### 📋 Sensor Summary")
             hx_df = pd.DataFrame({
@@ -1942,7 +1942,7 @@ If vibration increasing at rate Δv per day:
 
         with col_out:
             st.markdown("#### 📊 Diagnostic Confidence")
-            st.plotly_chart(make_confidence_gauge(conf * 100, "Compressor Diagnosis Confidence"), use_column_width=True)
+            st.plotly_chart(make_confidence_gauge(conf * 100, "Compressor Diagnosis Confidence"), use_container_width=True)
 
             st.markdown("#### 📈 Operational Parameters Radar")
             # Normalized radar
@@ -1971,7 +1971,7 @@ If vibration increasing at rate Δv per day:
                 font=dict(family='Inter', color='#000000'),
                 margin=dict(l=40, r=40, t=20, b=20)
             )
-            st.plotly_chart(fig_radar, use_column_width=True)
+            st.plotly_chart(fig_radar, use_container_width=True)
 
             st.markdown("#### 📋 Sensor Summary")
             comp_df = pd.DataFrame({
@@ -2155,7 +2155,7 @@ NPSHA > NPSHR  (Available must be > Required)
 
         with col_out:
             st.markdown("#### 📊 Diagnostic Confidence")
-            st.plotly_chart(make_confidence_gauge(conf * 100, "Pump Diagnosis Confidence"), use_column_width=True)
+            st.plotly_chart(make_confidence_gauge(conf * 100, "Pump Diagnosis Confidence"), use_container_width=True)
 
             st.markdown("#### 📈 Pump Performance Curve")
             flow_range = np.linspace(50, 600, 50)
@@ -2195,7 +2195,7 @@ NPSHA > NPSHR  (Available must be > Required)
                 font=dict(family='Inter', color='#000000'),
                 legend=dict(orientation='h', y=1.1, font=dict(color='#000000'))
             )
-            st.plotly_chart(fig_pump, use_column_width=True)
+            st.plotly_chart(fig_pump, use_container_width=True)
 
             st.markdown("#### 📋 Sensor Summary")
             pump_df = pd.DataFrame({
@@ -2472,7 +2472,7 @@ By reducing **Ṡgen (Entropy Generation)**, we directly:
             font=dict(family='Inter', color='#000000'),
             height=300, margin=dict(l=20, r=20, t=60, b=20)
         )
-        st.plotly_chart(fig_ag, use_column_width=True)
+        st.plotly_chart(fig_ag, use_container_width=True)
 
         st.markdown("#### 🌡️ Temperature Comparison")
         fig_temp_ag = go.Figure()
@@ -2492,7 +2492,7 @@ By reducing **Ṡgen (Entropy Generation)**, we directly:
             margin=dict(l=10, r=10, t=20, b=10),
             font=dict(family='Inter', color='#000000')
         )
-        st.plotly_chart(fig_temp_ag, use_column_width=True)
+        st.plotly_chart(fig_temp_ag, use_container_width=True)
 
     # ── PDF Report ──
     st.sidebar.markdown("---")
