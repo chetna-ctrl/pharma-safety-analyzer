@@ -975,7 +975,7 @@ def get_fingerprint(smiles):
         pass
     return None
 
-@st.cache_data(_allow_output_mutation=True)
+@st.cache_data
 def predict_pathways(smiles, _model):
     if _model is None: return None
     fp = get_fingerprint(smiles)
