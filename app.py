@@ -645,7 +645,7 @@ def get_smiles_from_name(name):
         "Moxifloxacin":     "COC1=C2C3CC4CC(C3)CN4C(=C2C(=O)C(=C1F)NCC5CC5)C(=O)O",
         "Ampicillin":       "CC1(C)SC2C(NC(=O)C(N)C3=CC=CC=C3)C(=O)N2C1C(=O)O",
         "Cephalexin":       "CC1=C(N2C(C(C2=O)NC(=O)C(C3=CC=CC=C3)N)SC1)C(=O)O",
-        "Ceftriaxone":      "CO/N=C(/C(=O)NC1C(=O)N2C(C(S/C12)CSC3=NC(=O)C(=NN3C)O)C(=O)O)\c1csc(N)n1",
+        "Ceftriaxone":      r"CO/N=C(/C(=O)NC1C(=O)N2C(C(S/C12)CSC3=NC(=O)C(=NN3C)O)C(=O)O)\c1csc(N)n1",
         "Clindamycin":      "CCCC1CC(N(C1)C)C(=O)NC(C2C(C(C(C(O2)SC)O)O)O)C(C)Cl",
         "Tetracycline":     "CC1(C2CC3C(C(=O)C(=C(C3(C(=O)C2=C(C4=C1C=CC=C4O)O)O)O)C(=O)N)N(C)C)O",
         "Vancomycin":       "CC1C(C(CC(O1)OC2C(C(C(OC2OC3=CC=C4C(=C3Cl)OC5=C(C=C(C(=C5)C(C(=O)N)NC(=O)C6C(=O)N7CCCC7C(=O)NC(CC(=O)N)C(=O)NC4C(=O)NC(C(C8=CC(=C(C(=C8)O)OC9C(C(C(C(O9)CO)O)O)NC(=O)C)Cl)O)C(=O)NC(C(C1=CC(=CC=C1)O)O)C(=O)NC6CC(=O)N)O)Cl)O)N)O",
@@ -656,7 +656,7 @@ def get_smiles_from_name(name):
         "Linezolid":        "CC(=O)NCC1=CC(=CC=C1)N2CCOC(C2)CNC(=O)C3=CC=C(O3)N4CCOCC4",
         "Cloxacillin":      "CC1=C(C(=NO1)C2=CC=CC=C2Cl)C(=O)NC3C4N(C3=O)C(C(S4)(C)C)C(=O)O",
         "Cefixime":         "C=CC1=C(N2C(C(C2=O)NC(=O)/C(=N\\OCC(=O)O)/C3=CSC(=N3)N)SC1)C(=O)O",
-        "Cefuroxime":       "CO/N=C(/C(=O)NC1C(=O)N2C(C(S/C12)COC(=O)N)C(=O)O)\c1ccco1",
+        "Cefuroxime":       r"CO/N=C(/C(=O)NC1C(=O)N2C(C(S/C12)COC(=O)N)C(=O)O)\c1ccco1",
         "Trimethoprim":     "COC1=CC(=CC(=C1OC)OC)CC2=CN=C(N=C2N)N",
         "Sulfamethoxazole":  "CC1=CC(=NO1)NS(=O)(=O)C2=CC=C(C=C2)N",
         "Lisinopril":       "C(CC(C(=O)O)NC(CCC1=CC=CC=C1)C(=O)N2CCCC2C(=O)O)CCN",
@@ -1305,7 +1305,7 @@ This 3-layer approach gives **>95% accuracy** because:
         items = list(quick_chems.items())
         for idx, (btn_label, chem_name) in enumerate(items):
             col = [qc1, qc2, qc3][idx % 3]
-            if col.button(btn_label, key=f"qc_{idx}", use_container_width=True):
+            if col.button(btn_label, key=f"qc_btn_{idx}", use_container_width=True):
                 st.session_state.quick_pick = chem_name
         
         st.markdown("---")
@@ -1657,7 +1657,7 @@ Fouling reduces `U`, which reduces heat transfer efficiency.
         with col_in:
             # ── Preset Scenarios ──
             st.markdown("#### ⚡ Quick Scenario (try these!):")
-            hx_scenario = st.radio("", ["🔧 Custom (adjust sliders)", "✅ Healthy Machine", "⚠️ Fouled / Dirty", "🚨 Sensor Drift"],
+            hx_scenario = st.radio("Operating Scenario:", ["🔧 Custom (adjust sliders)", "✅ Healthy Machine", "⚠️ Fouled / Dirty", "🚨 Sensor Drift"],
                                    key="hx_scenario", horizontal=True, label_visibility="collapsed")
             
             if hx_scenario == "✅ Healthy Machine":
@@ -1874,7 +1874,7 @@ If vibration increasing at rate Δv per day:
         with col_in:
             # ── Preset Scenarios ──
             st.markdown("#### ⚡ Quick Scenario (try these!):")
-            comp_scenario = st.radio("", ["🔧 Custom", "✅ Healthy", "⚠️ Valve Leak", "🚨 Bearing Failure"],
+            comp_scenario = st.radio("Unit Health:", ["🔧 Custom", "✅ Healthy", "⚠️ Valve Leak", "🚨 Bearing Failure"],
                                      key="comp_scenario", horizontal=True, label_visibility="collapsed")
             
             if comp_scenario == "✅ Healthy":
