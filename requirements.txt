@@ -1,7 +1,6 @@
-streamlit
+streamlit==1.31.1
 pandas
 numpy
-rdkit
 scikit-learn
 xgboost
 plotly
